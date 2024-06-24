@@ -7,46 +7,83 @@ const products = [
     id: 1,
     name: "Smartphone",
     description: "Latest model with advanced features",
-    price: "$699",
+    price: 699,
+    category: "Electronics",
+    rating: 4.5,
     image: "https://via.placeholder.com/150"
   },
   {
     id: 2,
     name: "Laptop",
     description: "High performance laptop for professionals",
-    price: "$999",
+    price: 999,
+    category: "Electronics",
+    rating: 4.7,
     image: "https://via.placeholder.com/150"
   },
   {
     id: 3,
     name: "Smartwatch",
     description: "Stylish smartwatch with health tracking",
-    price: "$199",
+    price: 199,
+    category: "Wearables",
+    rating: 4.2,
     image: "https://via.placeholder.com/150"
   }
 ];
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [category, setCategory] = useState("");
+  const [rating, setRating] = useState(0);
   const [filteredProducts, setFilteredProducts] = useState(products);
 
   useEffect(() => {
     setFilteredProducts(
       products.filter(product =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+        product.price >= priceRange[0] &&
+        product.price <= priceRange[1] &&
+        (category ? product.category === category : true) &&
+        product.rating >= rating
       )
     );
-  }, [searchQuery]);
+  }, [searchQuery, priceRange, category, rating]);
   return (
     <Container maxW="container.xl" p={4}>
       <VStack spacing={8}>
         <Header />
-        <Input
-          placeholder="Search for products..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          mb={4}
-        />
+        <Flex mb={4} justify="space-between" w="100%">
+          <Input
+            placeholder="Search for products..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <Input
+            placeholder="Min Price"
+            type="number"
+            value={priceRange[0]}
+            onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+          />
+          <Input
+            placeholder="Max Price"
+            type="number"
+            value={priceRange[1]}
+            onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+          />
+          <Input
+            placeholder="Category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          />
+          <Input
+            placeholder="Min Rating"
+            type="number"
+            value={rating}
+            onChange={(e) => setRating(Number(e.target.value))}
+          />
+        </Flex>
         <ProductList products={filteredProducts} />
         <Footer />
       </VStack>
