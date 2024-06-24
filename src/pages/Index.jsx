@@ -1,4 +1,5 @@
-import { Box, Container, VStack, Heading, Text, SimpleGrid, Image, Button, Flex } from "@chakra-ui/react";
+import { Box, Container, VStack, Heading, Text, SimpleGrid, Image, Button, Flex, Input } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 
 const products = [
@@ -26,11 +27,27 @@ const products = [
 ];
 
 const Index = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState(products);
+
+  useEffect(() => {
+    setFilteredProducts(
+      products.filter(product =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [searchQuery]);
   return (
     <Container maxW="container.xl" p={4}>
       <VStack spacing={8}>
         <Header />
-        <ProductList products={products} />
+        <Input
+          placeholder="Search for products..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          mb={4}
+        />
+        <ProductList products={filteredProducts} />
         <Footer />
       </VStack>
     </Container>
